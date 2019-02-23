@@ -34,7 +34,7 @@ public class Window extends JPanel {
         setPreferredSize(s);
         setMaximumSize(s);
         setMinimumSize(s);
-
+                
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -172,6 +172,18 @@ public class Window extends JPanel {
     
     public void close() {
         frame.dispose();
+    }
+    
+    public void resize() {
+        Dimension s = new Dimension((int) (container.getWidth() * container.getScale()), (int) (container.getHeight() * container.getScale()));
+        
+        setPreferredSize(s);
+        setMaximumSize(s);
+        setMinimumSize(s);
+        setSize(s);
+        
+        frame.pack();
+        frame.setLocationRelativeTo(null);
     }
     
 }

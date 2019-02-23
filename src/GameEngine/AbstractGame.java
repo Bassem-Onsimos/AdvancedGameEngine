@@ -47,7 +47,7 @@ public abstract class AbstractGame {
         
     }
 
-    public void updateGame() {
+    protected void updateGame() {
         
         if(pausable && getInput().isKeyUp(KeyEvent.VK_ESCAPE)) togglePause();
         
@@ -93,7 +93,7 @@ public abstract class AbstractGame {
         
     }
     
-    public void renderGame(Graphics2D g) {
+    protected void renderGame(Graphics2D g) {
         if(state != State.startMenu) render(g);
         else startMenu.render(g);
         
@@ -119,7 +119,7 @@ public abstract class AbstractGame {
         }
     }
 
-    public void displayElapsedTime(Graphics2D g2) {
+    protected void displayElapsedTime(Graphics2D g2) {
         String res = String.format("Elapsed Time: %fs, UPS: %.1f", elapsedTime, 1.0 / elapsedTime);
         
         int sx = container.getWidth() - 250;
@@ -139,11 +139,19 @@ public abstract class AbstractGame {
         return elapsedTime;
     }
     
+    public boolean isFBSlimited() {
+        return container.isFBSlimited();
+    }
+
+    public void setFBSlimited(boolean FBSlimited) {
+        container.setFBSlimited(FBSlimited);
+    }
+    
     public Input getInput() {
         return container.getInput();
     }
 
-    public GameContainer getContainer() {
+    protected GameContainer getContainer() {
         return container;
     }
     
@@ -153,6 +161,18 @@ public abstract class AbstractGame {
     
     public int getHeight() {
         return container.getHeight();
+    }
+    
+    public void setSize(int width, int height) {
+        container.setSize(width, height);
+    }
+    
+    public void setWidth(int width) {
+        container.setSize(width, container.getHeight());
+    }
+    
+    public void setHeight(int height) {
+        container.setSize(container.getWidth(), height);
     }
 
     public void setStartMenu(AbstractMenu menu) {

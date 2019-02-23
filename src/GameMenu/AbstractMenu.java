@@ -28,9 +28,10 @@ public abstract class AbstractMenu{
     //
     private String title;
     private String subMenuTitle;
+    private String subTitle;
     //
-    private int verticalSpace;
-    private Font font;
+    private Font titleFont;
+    private Font subTitleFont;
     //
     protected static final float opaque = 1.0f; 
     protected static final float transparent = 0.7f; 
@@ -76,16 +77,20 @@ public abstract class AbstractMenu{
         
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f) );
         
-        if(font==null) {
-            font = new Font("American Typewriter", Font.BOLD, 30);
+        if(titleFont==null) {
+            titleFont = new Font("American Typewriter", Font.BOLD, 30);
+        }
+        
+        if(subTitleFont==null) {
+            subTitleFont = new Font("American Typewriter", Font.PLAIN, 20);
         }
         
         ArrayList<MenuItem> displayedItems = subMenuMode ? subMenuItems : items;
         
         Font defaultFont = g.getFont();
         
-        g.setFont(font);       
-        FontMetrics metrics = g.getFontMetrics(font);
+        g.setFont(titleFont);       
+        FontMetrics metrics = g.getFontMetrics(titleFont);
         
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
@@ -102,24 +107,53 @@ public abstract class AbstractMenu{
         
         if(subMenuMode) {
             displayedTitle = subMenuTitle;
-            nTitle = 1;
+            nTitle++;
         }
         else if(title!=null) {
             displayedTitle = title;
-            nTitle = 1;
+            nTitle++;
+            
+            if(subTitle!=null) {
+                nTitle++;
+            }            
         }
         
-        verticalSpace = (int)( (float)(game.getHeight() - 2*offset ) / ( displayedItems.size() + nTitle ) );
+        double titleSize = 0;
+        if(nTitle < 2) titleSize = nTitle;
+        else titleSize = 1;
+        
+        int verticalSpace1 = (int)( (float)(game.getHeight() - 2*offset ) / ( displayedItems.size() + titleSize ) );
+        int verticalSpace2 = (int)( (float)(game.getHeight() - 2*offset ) / ( displayedItems.size() + nTitle ) );
+        
         
         if(displayedTitle != null) {
             int titleX = (int)((game.getWidth() - metrics.stringWidth(displayedTitle)) / 2.0);
-            int titleY = (0 * verticalSpace) + (int)offset + (int)( (verticalSpace - metrics.getHeight()) / 2.0 + metrics.getAscent());
+            int titleY = (0 * verticalSpace1) + (int)offset + (int)( (verticalSpace1 - metrics.getHeight()) / 2.0 + metrics.getAscent());
+            
+            int borderX = titleX;
+            int borderWidth = metrics.stringWidth(displayedTitle) + 30;
+            
+            int subTitleX = 0;
+            int subTitleY = 0;
+            
+            if(subTitle != null) {
+                
+                FontMetrics subTitleMetrics = g.getFontMetrics(subTitleFont);
+                
+                subTitleX = (int)((game.getWidth() - subTitleMetrics.stringWidth(subTitle)) / 2.0);
+                
+                if(metrics.getHeight() > subTitleMetrics.getHeight()) subTitleY = titleY + metrics.getHeight();
+                else subTitleY = titleY + subTitleMetrics.getHeight();
+                
+                if(subTitleX < titleX) borderX = subTitleX;
+                if(subTitleMetrics.stringWidth(subTitle) > metrics.stringWidth(displayedTitle)) borderWidth = subTitleMetrics.stringWidth(subTitle) + 30;
+            }
             
             Stroke defaultStroke = g.getStroke();
             
             g.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g.setColor(Color.red);
-            g.drawRoundRect(titleX - 15, titleY - (metrics.getAscent() + 5), metrics.stringWidth(displayedTitle) + 30, metrics.getHeight() + 10, 20, 20);
+            g.drawRoundRect(borderX - 15, titleY - (metrics.getAscent() + 5), borderWidth, nTitle * metrics.getHeight() + 10, 20, 20);
             
             g.setStroke(defaultStroke);
             
@@ -127,14 +161,28 @@ public abstract class AbstractMenu{
             g.drawString(displayedTitle, titleX + 1, titleY + 1);
             g.setColor(Color.LIGHT_GRAY);
             g.drawString(displayedTitle, titleX, titleY);
+            
+            
+            if(subTitle != null) {
+                g.setFont(subTitleFont);
+                g.setColor(Color.BLACK);
+                g.drawString(subTitle, subTitleX + 1, subTitleY + 1);
+                g.setColor(Color.RED);
+                g.drawString(subTitle, subTitleX, subTitleY);
+                
+                g.setFont(titleFont);
+            }
+        
         }
+        
+        
         
         for(MenuItem item : displayedItems) {
             int index = displayedItems.indexOf(item) + nTitle;
             String str = item.getTitle();
 
             int centeredX = (int)((game.getWidth() - metrics.stringWidth(str)) / 2.0);           
-            int centeredY = (index * verticalSpace) + (int)offset + (int)( (verticalSpace - metrics.getHeight()) / 2.0 + metrics.getAscent());
+            int centeredY = (index * verticalSpace2) + (int)offset + (int)( (verticalSpace2 - metrics.getHeight()) / 2.0 + metrics.getAscent());
             
             g.setColor(Color.BLACK);
             g.drawString(item.getTitle(), centeredX + 1, centeredY + 1);
@@ -222,12 +270,12 @@ public abstract class AbstractMenu{
         this.backGroundColor = backGroundColor;
     }
     
-    public Font getFont() {
-        return font;
+    public Font getTitleFont() {
+        return titleFont;
     }
 
-    public void setFont(Font font) {
-        this.font = font;
+    public void setTitleFont(Font titleFont) {
+        this.titleFont = titleFont;
     }
 
     public float getBackgroundOpacity() {
@@ -241,6 +289,24 @@ public abstract class AbstractMenu{
     public void setTitle(String title) {
         this.title = title;
     }
+    
+    public void removeTitle() {
+        this.title = null;
+    }
+    
+    public void removeSubTitle() {
+        this.subTitle = null;
+    }
+    
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
+    public void setSubTitleFont(Font subTitleFont) {
+        this.subTitleFont = subTitleFont;
+    }
+    
+    
     
     public void resetSelectedIndex() {
         selectedIndex = 0;
