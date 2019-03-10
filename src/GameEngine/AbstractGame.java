@@ -139,12 +139,16 @@ public abstract class AbstractGame {
         return elapsedTime;
     }
     
-    public boolean isFBSlimited() {
-        return container.isFBSlimited();
+    public boolean isFPSlimited() {
+        return container.isFPSlimited();
     }
 
-    public void setFBSlimited(boolean FBSlimited) {
-        container.setFBSlimited(FBSlimited);
+    public void setFPSlimited(boolean FPSlimited) {
+        container.setFPSlimited(FPSlimited);
+    }
+    
+    public void setFPSlimited(boolean FPSlimited, int FPStarget) {
+        container.setFPSlimited(FPSlimited, FPStarget);
     }
     
     public Input getInput() {

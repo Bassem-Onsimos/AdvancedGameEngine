@@ -56,11 +56,16 @@ public abstract class AbstractMenu{
         if(subMenuMode){
             if(selectedIndex < 0) selectedIndex = subMenuItems.size() - 1;
             if(selectedIndex == subMenuItems.size()) selectedIndex = 0;
+            
+            subMenuItems.get(selectedIndex).hover();
         }
         else {
             if(selectedIndex < 0) selectedIndex = items.size() - 1;
             if(selectedIndex == items.size()) selectedIndex = 0;
+            
+            items.get(selectedIndex).hover();
         }
+        
         
         if(game.getInput().isKeyUp(KeyEvent.VK_SPACE) || game.getInput().isKeyUp(KeyEvent.VK_ENTER)) chooseItem();
 
@@ -305,8 +310,10 @@ public abstract class AbstractMenu{
     public void setSubTitleFont(Font subTitleFont) {
         this.subTitleFont = subTitleFont;
     }
-    
-    
+
+    public int getSelectedIndex() {
+        return selectedIndex;
+    }
     
     public void resetSelectedIndex() {
         selectedIndex = 0;

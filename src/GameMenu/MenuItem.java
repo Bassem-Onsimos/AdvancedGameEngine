@@ -28,4 +28,9 @@ public abstract class MenuItem {
         function();
         menu.resetSelectedIndex();
     }
+    
+    public void hover() {
+        
+    }
+    
 }

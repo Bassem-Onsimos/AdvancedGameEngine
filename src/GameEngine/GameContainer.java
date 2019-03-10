@@ -16,7 +16,9 @@ public class GameContainer{
     //
     private ScheduledExecutorService executor;
     //
-    private boolean FBSlimited = true;
+    private boolean FPSlimited = true;
+    private int FPStarget = 60;
+    //
     
     public GameContainer(AbstractGame game, int width, int height, float scale) {
         this.game = game;
@@ -51,9 +53,9 @@ public class GameContainer{
 
         executor = new ScheduledThreadPoolExecutor(2);
         
-        if(FBSlimited) { // Around 60 FBS
+        if(FPSlimited) { 
             executor.scheduleAtFixedRate(updater, 1, 1, TimeUnit.MILLISECONDS);
-            executor.scheduleAtFixedRate(renderer, 1, 16, TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(renderer, 1, 1000/FPStarget, TimeUnit.MILLISECONDS);
         }
         else {
             executor.scheduleWithFixedDelay(updater, 1, 1, TimeUnit.MILLISECONDS);
@@ -89,12 +91,20 @@ public class GameContainer{
         return input;
     }
 
-    public boolean isFBSlimited() {
-        return FBSlimited;
+    public boolean isFPSlimited() {
+        return FPSlimited;
     }
 
-    public void setFBSlimited(boolean FBSlimited) {
-        this.FBSlimited = FBSlimited;
+    public void setFPSlimited(boolean FPSlimited) {
+        this.FPSlimited = FPSlimited;
+        this.FPStarget = 60;
+    }
+    
+    public void setFPSlimited(boolean FPSlimited, int FPStarget) {
+        this.FPSlimited = FPSlimited;
+        FPStarget = (FPStarget <= 1000) ? FPStarget : 1000;
+        FPStarget = (FPStarget > 0) ? FPStarget : 1;
+        this.FPStarget = FPStarget;
     }
     
     public void setSize(int width, int height) {
